@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Modern AlphaTab Guitar Player</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <link rel="stylesheet" type="text/css" href="search.css">
+    <link rel="stylesheet" type="text/css" href="styles/search.css">
+    <link rel="stylesheet" type="text/css" href="styles/style.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script defer src="script.js"></script>
     <script defer src="search.js"></script>
-    <script src="https://kit.fontawesome.com/b43f0e512e.js" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/b43f0e512e.js" ></script>
     <script src="https://cdn.jsdelivr.net/npm/@coderline/alphatab@latest/dist/alphaTab.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
@@ -86,7 +86,6 @@
                         <option value="page" selected>Page</option>
                     </select>
                 </div>
-                <!-- Volume and speed controls will be added by JS -->
             </div>
         </div>
     </div>
@@ -102,7 +101,6 @@
         </div>
     </template> 
 
-    <!-- Search Modal -->
     <div class="search-modal" id="search-modal">
       <div class="search-modal-content">
         <div class="search-modal-header">
@@ -117,7 +115,6 @@
             </button>
           </form>
         </div>
-        <!-- Recent searches will be injected here -->
         <div class="filters-container">
           <div class="filter-group">
             <label for="genre-filter">Genre:</label>
@@ -159,11 +156,9 @@
           </div>
         </div>
         <div id="search-results" class="search-results">
-          <!-- Search results will be injected here -->
         </div>
         <div id="popular-tabs-container" class="popular-tabs-container" style="display: none;">
           <div id="popular-tabs" class="tab-grid">
-            <!-- Popular tabs will be injected here -->
           </div>
         </div>
       </div>

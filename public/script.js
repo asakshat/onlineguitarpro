@@ -484,21 +484,7 @@ function createSpeedControl() {
   return speedControl;
 }
 
-function createAutoScrollToggle() {
-  const autoScrollControl = document.createElement('a');
-  autoScrollControl.className = 'btn toggle at-auto-scroll active';
-  autoScrollControl.innerHTML = '<i class="fas fa-scroll"></i>';
-  autoScrollControl.title = 'Toggle Auto-Scrolling';
-  
-  autoScrollControl.onclick = () => {
-    autoScrollControl.classList.toggle('active');
-    api.settings.player.scrollMode = autoScrollControl.classList.contains('active') ? 
-      'continuous' : 'off';
-    api.updateSettings();
-  };
-  
-  return autoScrollControl;
-}
+
 
 const controlsRight = wrapper.querySelector('.at-controls-right');
 controlsRight.appendChild(createMasterVolumeControl());
