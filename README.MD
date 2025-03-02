@@ -86,7 +86,6 @@ Access the tab library by:
 - **Loop**: Enable/disable looping for the entire song
 - **Speed**: Adjust playback speed (25%-200%)
 - **Volume**: Adjust master volume and individual track volumes
-- **Auto-scroll**: Toggle automatic scrolling during playback
 
 ## Configuration
 
