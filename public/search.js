@@ -1,15 +1,11 @@
-// Initialize the search interface when the DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    // Check if search modal already exists to avoid duplicates
     if (!document.getElementById('search-modal')) {
         addSearchModalButton();
     }
     
-    // Add keyboard shortcuts
     setupKeyboardShortcuts();
 });
 
-// API utilities
 async function fetchAPI(endpoint, params = {}) {
     try {
         const queryString = new URLSearchParams(params).toString();
@@ -27,7 +23,6 @@ async function fetchAPI(endpoint, params = {}) {
     }
 }
 
-// UI helper functions
 function showMessage(type, message) {
     const resultsContainer = document.getElementById('search-results');
     resultsContainer.innerHTML = `<div class="${type}-message">${message}</div>`;
@@ -38,7 +33,6 @@ function addSearchModalButton() {
     const controlsRight = document.querySelector('.at-controls-right');
     if (!controlsRight) return;
     
-    // Check if button already exists
     if (controlsRight.querySelector('.open-search-modal-button')) return;
     
     const searchButton = document.createElement('button');
@@ -49,7 +43,6 @@ function addSearchModalButton() {
     controlsRight.insertBefore(searchButton, controlsRight.firstChild);
 }
 
-// Modal control functions
 function openSearchModal() {
     const modal = document.getElementById('search-modal');
     if (!modal) return;
@@ -57,16 +50,12 @@ function openSearchModal() {
     modal.style.display = 'flex';
     document.getElementById('search-input').focus();
     
-    // Load recent searches
     displayRecentSearches();
     
-    // Setup auto search
     setupAutoSearch();
     
-    // Load recent tabs
     displayRecentTabs();
     
-    // Load popular tabs if tab is active and empty
     const popularTab = document.querySelector('.modal-tab-button:nth-child(2)');
     const isPopularTabActive = popularTab && popularTab.classList.contains('active');
     const popularTabsContainer = document.getElementById('popular-tabs');
@@ -81,7 +70,6 @@ function closeSearchModal() {
     if (modal) modal.style.display = 'none';
 }
 
-// Tab navigation functions
 function showSearchTab() {
     document.querySelector('.modal-tab-button:first-child').classList.add('active');
     document.querySelector('.modal-tab-button:nth-child(2)').classList.remove('active');
@@ -97,7 +85,6 @@ function showPopularTab() {
     loadPopularTabs();
 }
 
-// Search functionality
 function getSearchParams() {
     return {
         query: document.getElementById('search-input').value,
@@ -118,12 +105,10 @@ function debounce(func, wait) {
 async function enhancedSearch(page = 1) {
     const { query, genre, difficulty, sort } = getSearchParams();
     
-    // Add to recent searches if not empty
     if (query && query.trim() !== '') {
         addToRecentSearches(query);
     }
     
-    // Initialize search cache if needed
     if (!window.searchCache) {
         window.searchCache = {};
     }
@@ -132,14 +117,12 @@ async function enhancedSearch(page = 1) {
     showSearchTab();
     
     try {
-        // Check cache first
         const cacheKey = `${query}-${genre}-${difficulty}-${sort}-${page}`;
         if (window.searchCache[cacheKey]) {
             displaySearchResults(window.searchCache[cacheKey]);
             return;
         }
         
-        // Determine endpoint based on query
         const endpoint = query ? '/api/tabs/search' : '/api/tabs';
         const params = { page };
         
@@ -150,7 +133,6 @@ async function enhancedSearch(page = 1) {
         
         const data = await fetchAPI(endpoint, params);
         
-        // Cache results for 5 minutes
         window.searchCache[cacheKey] = data;
         setTimeout(() => {
             delete window.searchCache[cacheKey];
@@ -158,7 +140,6 @@ async function enhancedSearch(page = 1) {
         
         displaySearchResults(data);
         
-        // If no results, suggest alternatives
         const hasResults = (data.tabs && data.tabs.length > 0) || 
                           (Array.isArray(data) && data.length > 0);
                           
@@ -185,31 +166,24 @@ async function suggestAlternativeSearches(originalQuery) {
     const noResultsDiv = document.createElement('div');
     noResultsDiv.className = 'no-results';
     
-    // Create variations of the original query
     const variations = [];
     
-    // Remove special characters
     const cleanQuery = originalQuery.replace(/[^\w\s]/gi, ' ').replace(/\s+/g, ' ').trim();
     if (cleanQuery !== originalQuery) variations.push(cleanQuery);
     
-    // Try first word only
     const words = originalQuery.split(/\s+/);
     if (words.length > 1) {
         variations.push(words[0]);
         
-        // Try last word only
         if (words.length > 2) variations.push(words[words.length - 1]);
     }
     
-    // Remove spaces
     const noSpaces = originalQuery.replace(/\s+/g, '');
     if (noSpaces !== originalQuery) variations.push(noSpaces);
     
-    // Replace spaces with underscores
     const withUnderscores = originalQuery.replace(/\s+/g, '_');
     if (withUnderscores !== originalQuery) variations.push(withUnderscores);
     
-    // Check each variation for results
     const suggestedSearches = [];
     for (const variation of variations) {
         try {
@@ -225,7 +199,6 @@ async function suggestAlternativeSearches(originalQuery) {
         }
     }
     
-    // Show suggestions or tips
     noResultsDiv.innerHTML = `
         <p>No results found for "${originalQuery}".</p>
         ${suggestedSearches.length > 0 ? `
@@ -251,12 +224,10 @@ async function suggestAlternativeSearches(originalQuery) {
     resultsContainer.appendChild(noResultsDiv);
 }
 
-// Display functions
 function displaySearchResults(data) {
     const resultsContainer = document.getElementById('search-results');
     resultsContainer.innerHTML = '';
     
-    // Handle different data formats
     const tabs = data.tabs || data;
     
     if (!tabs || tabs.length === 0) {
@@ -264,17 +235,14 @@ function displaySearchResults(data) {
         return;
     }
     
-    // Create results header
     const resultHeader = document.createElement('h3');
     resultHeader.className = 'results-header';
     resultHeader.textContent = `Found ${tabs.length} tabs`;
     resultsContainer.appendChild(resultHeader);
     
-    // Create tab grid
     const tabGrid = document.createElement('div');
     tabGrid.className = 'tab-grid';
     
-    // Add tab cards to grid
     tabs.forEach(tab => {
         const tabCard = createTabCard(tab);
         tabGrid.appendChild(tabCard);
@@ -282,12 +250,10 @@ function displaySearchResults(data) {
     
     resultsContainer.appendChild(tabGrid);
     
-    // Add pagination if available
     if (data.pagination) {
         const paginationContainer = document.createElement('div');
         paginationContainer.className = 'pagination';
         
-        // Show pagination info
         paginationContainer.innerHTML = `
             <div class="pagination-info">
                 Showing ${tabs.length} of ${data.pagination.total} tabs
@@ -295,12 +261,10 @@ function displaySearchResults(data) {
             </div>
         `;
         
-        // Add pagination controls
         if (data.pagination.pages > 1) {
             const paginationControls = document.createElement('div');
             paginationControls.className = 'pagination-controls';
             
-            // Previous page button
             if (data.pagination.page > 1) {
                 const prevButton = document.createElement('button');
                 prevButton.className = 'pagination-button';
@@ -309,7 +273,6 @@ function displaySearchResults(data) {
                 paginationControls.appendChild(prevButton);
             }
             
-            // Next page button
             if (data.pagination.page < data.pagination.pages) {
                 const nextButton = document.createElement('button');
                 nextButton.className = 'pagination-button';
@@ -325,7 +288,6 @@ function displaySearchResults(data) {
     }
 }
 
-// Tab card creation
 function createTabCard(tab) {
     if (!tab) return document.createElement('div');
     
@@ -333,7 +295,6 @@ function createTabCard(tab) {
     tabCard.className = 'tab-card';
     tabCard.setAttribute('data-id', tab.id || '');
     
-    // Determine instrument icon
     let instrumentIcon = 'fas fa-guitar';
     if (tab.tags) {
         if (tab.tags.includes('bass')) {
@@ -343,7 +304,6 @@ function createTabCard(tab) {
         }
     }
     
-    // Get difficulty info
     const difficultyMap = {
         'Beginner': { class: 'difficulty-beginner', icon: 'baby' },
         'Intermediate': { class: 'difficulty-intermediate', icon: 'user' },
@@ -355,7 +315,6 @@ function createTabCard(tab) {
     const difficultyClass = difficultyInfo.class || '';
     const difficultyIcon = difficultyInfo.icon || 'user';
     
-    // Ensure file URL is properly formatted
     let safeFileUrl = tab.fileUrl || '';
     if (!safeFileUrl.startsWith('http') && !safeFileUrl.startsWith('/')) {
         safeFileUrl = '/' + safeFileUrl;
@@ -364,7 +323,6 @@ function createTabCard(tab) {
     
     const fileFormat = tab.fileFormat ? tab.fileFormat.toUpperCase() : 'GP';
     
-    // Create card HTML
     tabCard.innerHTML = `
         <div class="tab-card-header">
             <div class="tab-instrument">
@@ -391,7 +349,6 @@ function createTabCard(tab) {
         </div>
     `;
     
-    // Add click handler for the card
     tabCard.addEventListener('click', function(e) {
         if (e.target.tagName !== 'A' && !e.target.closest('a')) {
             closeSearchModal();
@@ -402,7 +359,6 @@ function createTabCard(tab) {
     return tabCard;
 }
 
-// Popular tabs loading
 async function loadPopularTabs() {
     const popularTabsContainer = document.getElementById('popular-tabs');
     if (!popularTabsContainer) return;
@@ -413,7 +369,6 @@ async function loadPopularTabs() {
         const data = await fetchAPI('/api/tabs/popular');
         popularTabsContainer.innerHTML = '';
         
-        // Extract tabs from response
         let tabsArray = [];
         if (Array.isArray(data)) {
             tabsArray = data;
@@ -430,7 +385,6 @@ async function loadPopularTabs() {
             return;
         }
         
-        // Create tab cards
         tabsArray.forEach(tab => {
             if (tab && typeof tab === 'object') {
                 popularTabsContainer.appendChild(createTabCard(tab));
@@ -442,26 +396,20 @@ async function loadPopularTabs() {
     }
 }
 
-// Recent tabs functionality
 let recentTabs = [];
 const MAX_RECENT_TABS = 5;
 
 function addToRecentTabs(tab) {
-    // Skip if invalid tab
     if (!tab || !tab.id) return;
     
-    // Remove existing entry if present
     recentTabs = recentTabs.filter(t => t.id !== tab.id);
     
-    // Add to beginning of array
     recentTabs.unshift(tab);
     
-    // Limit to max tabs
     if (recentTabs.length > MAX_RECENT_TABS) {
         recentTabs.pop();
     }
     
-    // Store in localStorage
     try {
         localStorage.setItem('recentTabs', JSON.stringify(recentTabs));
     } catch (error) {
@@ -486,7 +434,6 @@ function displayRecentTabs() {
     
     if (recentTabs.length === 0) return;
     
-    // Check if section already exists
     if (document.querySelector('.recent-tabs-section')) {
         document.querySelector('.recent-tabs-section').remove();
     }
@@ -529,14 +476,12 @@ function displayRecentTabs() {
     
     recentTabsSection.appendChild(recentTabsList);
     
-    // Insert at top of modal
     const tabsContainer = document.querySelector('.modal-tabs-container');
     if (tabsContainer) {
         tabsContainer.parentNode.insertBefore(recentTabsSection, tabsContainer);
     }
 }
 
-// Recent searches functionality
 let recentSearches = [];
 const MAX_RECENT_SEARCHES = 5;
 
@@ -545,18 +490,14 @@ function addToRecentSearches(query) {
     
     const trimmedQuery = query.trim();
     
-    // Remove existing entry if present
     recentSearches = recentSearches.filter(q => q !== trimmedQuery);
     
-    // Add to beginning of array
     recentSearches.unshift(trimmedQuery);
     
-    // Limit to max searches
     if (recentSearches.length > MAX_RECENT_SEARCHES) {
         recentSearches.pop();
     }
     
-    // Store in localStorage
     try {
         localStorage.setItem('recentSearches', JSON.stringify(recentSearches));
     } catch (error) {
@@ -581,7 +522,6 @@ function displayRecentSearches() {
     
     if (recentSearches.length === 0) return;
     
-    // Check if section already exists
     if (document.querySelector('.recent-searches-section')) {
         document.querySelector('.recent-searches-section').remove();
     }
@@ -623,11 +563,9 @@ function setupAutoSearch() {
     const searchInput = document.getElementById('search-input');
     if (!searchInput) return;
     
-    // Remove existing listeners to avoid duplicates
     const newSearchInput = searchInput.cloneNode(true);
     searchInput.parentNode.replaceChild(newSearchInput, searchInput);
     
-    // Add debounced search on input
     const debouncedSearch = debounce(() => {
         if (newSearchInput.value.trim().length > 1) {
             enhancedSearch();
@@ -636,7 +574,6 @@ function setupAutoSearch() {
     
     newSearchInput.addEventListener('input', debouncedSearch);
     
-    // Handle form submission
     const searchForm = newSearchInput.closest('form');
     if (searchForm) {
         searchForm.onsubmit = function(e) {
@@ -646,7 +583,6 @@ function setupAutoSearch() {
     }
 }
 
-// Server connection test
 async function testServerConnection() {
     showMessage('loading', 'Testing connection to server...');
     
@@ -668,25 +604,20 @@ async function testServerConnection() {
     }
 }
 
-// Toast notifications
 function showToast(type, message, duration = 3000) {
-    // Remove existing toasts
     const existingToasts = document.querySelectorAll('.loading-toast, .error-toast');
     existingToasts.forEach(toast => toast.remove());
     
-    // Create new toast
     const toast = document.createElement('div');
     toast.className = `${type}-toast`;
     toast.innerHTML = message;
     document.body.appendChild(toast);
     
-    // Auto-remove after duration
     setTimeout(() => {
         toast.remove();
     }, duration);
 }
 
-// Tab loading with toast feedback
 function loadTab(fileUrl) {
     try {
         showToast('loading', '<i class="fas fa-spinner fa-spin"></i> Loading tab...');
@@ -698,15 +629,12 @@ function loadTab(fileUrl) {
     }
 }
 
-// Keyboard shortcuts
 function setupKeyboardShortcuts() {
     document.addEventListener('keydown', function(e) {
-        // Escape to close modal
         if (e.key === 'Escape') {
             closeSearchModal();
         }
         
-        // Ctrl/Cmd+F to open search
         if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
             e.preventDefault();
             openSearchModal();
@@ -714,7 +642,6 @@ function setupKeyboardShortcuts() {
     });
 }
 
-// Close modal when clicking outside
 window.addEventListener('click', function(event) {
     const modal = document.getElementById('search-modal');
     if (event.target === modal) {
