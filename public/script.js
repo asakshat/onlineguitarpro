@@ -489,7 +489,6 @@ function createSpeedControl() {
 const controlsRight = wrapper.querySelector('.at-controls-right');
 controlsRight.appendChild(createMasterVolumeControl());
 controlsRight.appendChild(createSpeedControl());
-controlsRight.appendChild(createAutoScrollToggle());
 
 api.playerReady.on(() => {
   api.masterVolume = 1.0;
