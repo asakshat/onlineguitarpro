@@ -813,7 +813,7 @@ body {
   color: white;
   border: none;
   border-radius: var(--border-radius);
-  padding: 8px 15px;
+  padding: 8px 70px;
   cursor: pointer;
   display: flex;
   align-items: center;
