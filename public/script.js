@@ -7,8 +7,8 @@ function getFileFromUrl() {
 }
 
 const settings = {
-  file: getFileFromUrl() || "https://www.alphatab.net/files/canon.gp",
-  player: {
+  file: getFileFromUrl() || "/tabs/ACDC%20-%20Back%20in%20Black.gp3",
+    player: {
     enablePlayer: true,
     soundFont: "https://cdn.jsdelivr.net/npm/@coderline/alphatab@latest/dist/soundfont/sonivox.sf2",
     scrollElement: wrapper.querySelector('.at-viewport'),
