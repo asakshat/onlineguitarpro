@@ -4,6 +4,9 @@ A feature-rich, modern web application for viewing and playing Guitar Pro tabs u
 
 ![ Guitar Player](https://via.placeholder.com/800x450/f1f5f9/1e293b?text=AlphaTab+Guitar+Player)
 
+## ToDo for future version
+- Add a new personalized soundfont for better midi instrument sounds.
+
 ## Features
 
 - 🎵 **Guitar Tab Playback** - Play, pause, and navigate through guitar tabs
